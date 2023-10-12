@@ -41,6 +41,20 @@ To run the exploit:
    python exploit.py
    ```
 
+### Output
+
+The exploit code enables a transition from the guest user to the root user, marking the successful execution of our buffer overflow attack, resulting in gaining root access.
+
+1. To confirm that our exploit works:
+   ```
+   whoami
+   ```
+   If it gives root, it means our exploit works and now guest user have root privilege.
+
+### Common Error
+
+If you encounter the "failed to open source file" error, switch to the root user and adjust permissions again. 
+
 
 
 
