@@ -128,8 +128,9 @@
 <pre><code>objdump -D /lib/tls/libc.so.6 > dis.txt</code></pre>
 
 <p><strong>Search for the "jmp esp" instruction:</strong></p>
-<pre><code>grep "jmp    *%esp" dis.txt</code></pre>
-
+<pre><code>grep "*%esp" dis.txt</code></pre>
+        
+<p> There should be four spaces between “jmp" and “*”. </p>
 <p>
     You'll find a value like <code>0x12345678</code>, which you'll use in your Python exploit code.
 </p>
