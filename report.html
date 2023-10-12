@@ -110,7 +110,11 @@
 <pre><code>x/100x $esp-200</code></pre>
 
 <p>
-    In your case, calculate the offset by subtracting the register's value (e.g., 0xbffff670) from the memory value (e.g., 0xbffff5e4). In my case the value yield for an <strong>offset value is 140</strong>.
+    In your case, calculate the offset by subtracting the memory value (e.g., 0xbffff5e4) from the register's value (e.g., 0xbffff670). In my case the value yield for an <strong>offset value is 140</strong>.
+</p>
+
+<p> 
+    You can use this <a href="https://www.calculator.net/hex-calculator.html">website</a> to calculate offset.
 </p>
 
 <h3>2. Return Address</h3>
