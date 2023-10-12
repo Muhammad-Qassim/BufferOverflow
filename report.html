@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buffer Overflow Attack Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 20px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        h2 {
+            font-size: 20px;
+        }
+
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+
+        #content {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <h1>Buffer Overflow Attack Guide</h1>
+
+        <h2>Introduction</h2>
+        <p>
+            This guide will help you understand and demonstrate a buffer overflow attack. Please note that buffer overflow attacks are illegal and unethical. This guide is for educational purposes only.
+        </p>
+
+        <h2>Prerequisites</h2>
+        <ol>
+            <li><strong>Virtual Machine Setup</strong>:
+                <p>
+                    Download and import the provided virtual machine (VM) to VMware or VirtualBox. The default user account is root with no password.
+                </p>
+            </li>
+
+            <li><strong>Program and Files</strong>:
+                <p>
+                    You can download the <a href="https://drive.google.com/file/d/1-4L2V2m3grNeQNF7pvcin8qGZhh4cbrg/view">getscore.c</a>, <a href="https://drive.google.com/file/d/1-4L2V2m3grNeQNF7pvcin8qGZhh4cbrg/view">score.txt</a>, and Redhat9 VM from this link.
+                </p>
+            </li>
+
+            <li><strong>Compile and Set Permissions</strong>:
+                <p>
+                    Copy the <code>getscore.c</code> program to the VM or download it from <a href="http://analysis4ms.com/static/p1.zip">here</a>.
+                </p>
+                <pre><code>gcc getscore.c -o getscore</code></pre>
+                <pre><code>chmod 755 getscore</code></pre>
+                <pre><code>chmod u+s getscore</code></pre>
+                <pre><code>chmod 600 score.txt</code></pre>
+            </li>
+
+            <li><strong>Check Permissions</strong>:
+                <pre><code>ls -l</code></pre>
+            </li>
+
+            <li><strong>Run the Program</strong>:
+                <p>
+                    Execute the program: <code>./getscore "Mary Doe" 123-45-6789</code>.
+                </p>
+                <p>Expected output: "Your score is A+".</p>
+            </li>
+        </ol>
+
+        <h2>Gathering Required Data</h2>
+        <!-- Content related to OFFSET, Return Address, and Shellcode sections -->
+
+        <h2>Creating the Exploit File in Python</h2>
+        <pre><code>
+            <!-- Your Python code here -->
+        </code></pre>
+
+        <h2>Running the Exploit</h2>
+        <ol>
+            <li><strong>Create a guest account</strong>:
+                <pre><code>useradd guest</code></pre>
+            </li>
+
+            <li><strong>Switch to the guest account</strong>:
+                <pre><code>su guest</code></pre>
+            </li>
+
+            <li><strong>Run the Python exploit</strong>:
+                <pre><code>python exploit.py</code></pre>
+            </li>
+        </ol>
+
+        <h2>Common Error</h2>
+        <p>
+            If you encounter the "failed to open source file" error, switch to the root user and adjust permissions as mentioned in the prerequisites.
+        </p>
+    </div>
+</body>
+</html>
